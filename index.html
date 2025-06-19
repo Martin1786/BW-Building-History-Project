@@ -366,7 +366,8 @@
 
 			const response = await fetch('https://script.google.com/macros/s/AKfycbxz41Lpy65pBt2jIDQSU2HsHe1NZ5BUSF_eiTRotNdRWZAwOecu_teDR44rFtDigkea/exec', {
 			  method: 'POST',
-			  headers: { 'Content-Type': 'application/json' },
+			  redirect: 'follow',
+			  headers: { 'Content-Type': 'text/plain' },
 			  body: JSON.stringify(data)
 			});
 
