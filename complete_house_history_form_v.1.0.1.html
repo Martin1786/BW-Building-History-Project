@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House History Form - Bishops Waltham House History Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #00674F 0%, #00674F 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .form-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 20px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            text-align: center;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover .file-upload-label {
+            background: #667eea;
+            color: white;
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f4f8;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 5px;
+        }
+
+        .help-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .example-text {
+            background: #f0f7ff;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .character-count {
+            font-size: 0.8em;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e1e5e9;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .script-url-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .script-url-notice strong {
+            color: #d68910;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="image001.png" alt="Bishops Waltham Heritage" style="max-height: 80px; margin-bottom: 15px;">
+            <h1>House History Form</h1>
+            <p>Bishops Waltham Community Heritage Project</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Notice about Google Apps Script URL -->
+        <div class="script-url-notice">
+            <strong>⚠️ SETUP REQUIRED:</strong> Remember to replace 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' in the JavaScript code with your actual Google Apps Script web app URL before using this form.
+        </div>
+
+        <form id="houseHistoryForm">
+            <!-- Photo Upload Section -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">📸</span>
+                    Property Photographs
+                </h2>
+                <div class="form-group">
+                    <label for="photos">Upload Recent Photographs <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" id="photos" name="photos" multiple accept="image/*" required>
+                        <label for="photos" class="file-upload-label">
+                            📷 Click to upload photographs<br>
+                            <small>Please ensure photos are up-to-date and don't reveal security details</small>
+                        </label>
+                    </div>
+                    <div id="photoPreview" class="file-preview"></div>
+                    <div class="help-text">
+                        <strong>Important:</strong> Please ensure photographs don't reveal security information like ladder storage, hidden gates, etc. 
+                        Additional detailed photographs are welcome and will be included lower on the page.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Address Section -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">📍</span>
+                    Property Location
+                </h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address">Full Address <span class="required">*</span></label>
+                        <textarea id="address" name="address" placeholder="Enter the complete address..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="postcode">Postcode <span class="required">*</span></label>
+                        <input type="text" id="postcode" name="postcode" placeholder="e.g. SO32 1DH" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="position">Position in Town <span class="required">*</span></label>
+                    <input type="text" id="position" name="position" placeholder="e.g. in the town centre or to the north of the town, off the Corhampton road" required>
+                    <div class="help-text">
+                        Provide a one-line statement about the property's approximate position in Bishops Waltham
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Description Section -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">🏘️</span>
+                    Property Description
+                </h2>
+                <div class="form-group">
+                    <label for="description">Basic Description <span class="required">*</span></label>
+                    <textarea id="description" name="description" placeholder="Provide a factual description like an estate agent would (without the glitz)..." required></textarea>
+                    <div class="character-count">
+                        <span id="descriptionCount">0</span> characters
+                    </div>
+                    <div class="example-text">
+                        <strong>Example:</strong> "A four bedroomed, detached house believed to be 200 or so years old, contains some timber-framing visible upstairs. Appears to also have a modern extension to create the fourth bedroom."
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="specialFeatures">Special Features & Known History</label>
+                    <textarea id="specialFeatures" name="specialFeatures" placeholder="Any special features or believed/known history..."></textarea>
+                    <div class="character-count">
+                        <span id="featuresCount">0</span> characters
+                    </div>
+                    <div class="example-text">
+                        <strong>Examples:</strong> "it has what looks like a coach house", "there is a well in the garden", "it has a large cellar with lots of alcoves", "it is believed to have been a pub at some time in the past", "it is said French prisoners of war from Napoleonic times stayed here...", "it is a classic Arts and Crafts Movement building."
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="listedBuilding">Is this a Listed Building?</label>
+                    <select id="listedBuilding" name="listedBuilding">
+                        <option value="">Not sure</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <div class="help-text">
+                        Check at: <a href="https://britishlistedbuildings.co.uk/england/bishops-waltham-winchester-hampshire" target="_blank">British Listed Buildings</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interest & Motivation Section -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">🤔</span>
+                    Your Interest
+                </h2>
+                <div class="form-group">
+                    <label for="whyInterest">Why Your Interest <span class="required">*</span></label>
+                    <textarea id="whyInterest" name="whyInterest" placeholder="Explain why you want to conduct/have started/have done a house history..." required></textarea>
+                    <div class="character-count">
+                        <span id="interestCount">0</span> characters
+                    </div>
+                    <div class="example-text">
+                        <strong>Simple example:</strong> "It seems Victorian but we want to know when it was first built and who lived here before us"<br><br>
+                        <strong>Complex example:</strong> "The earliest records show it was built in about 1430 – soon after Agincourt – and in the 1950s it was a seed and flour shop, what happened in between we don't know!"
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Request Section -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">🤝</span>
+                    How Others Can Help
+                </h2>
+                <div class="form-group">
+                    <label for="helpNeeded">What Would You Like to Find Out?</label>
+                    <textarea id="helpNeeded" name="helpNeeded" placeholder="Explain what you want to find out - we'll monitor and forward any responses..."></textarea>
+                    <div class="character-count">
+                        <span id="helpCount">0</span> characters
+                    </div>
+                    <div class="example-text">
+                        <strong>Examples:</strong><br>
+                        • "Our chimney pots are very tall, pink in colour with red bands at the top and bottom – does that signify anything?"<br>
+                        • "There are dates and letters carved in a brick on the front wall – what does that mean?"<br>
+                        • "Is it true that Free Street is so called because it avoided the Toll Road?"<br>
+                        • "I've been told it was once a girl's school with some boarders, is that likely?"
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing Research Section -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">📚</span>
+                    Your House History Research
+                </h2>
+                <div class="form-group">
+                    <label for="existingHistory">Information You've Already Discovered</label>
+                    <textarea id="existingHistory" name="existingHistory" placeholder="Please supply any/all information you have discovered about your property's history..."></textarea>
+                    <div class="character-count">
+                        <span id="historyCount">0</span> characters
+                    </div>
+                    <div class="help-text">
+                        Include any documents, records, stories, or research you've already completed. This will be posted on the community website.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="documents">Supporting Documents</label>
+                    <div class="file-upload">
+                        <input type="file" id="documents" name="documents" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                        <label for="documents" class="file-upload-label">
+                            📄 Upload supporting documents, old photographs, deeds, etc.
+                        </label>
+                    </div>
+                    <div id="documentPreview" class="file-preview"></div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-card">
+                <h2 class="section-title">
+                    <span class="section-icon">📧</span>
+                    Contact Information
+                </h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Your Name <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number (Optional)</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="submit-btn">
+                    🏠 Submit House History Form
+                </button>
+                <div class="help-text" style="margin-top: 15px;">
+                    Your submission will be reviewed and added to the Bishops Waltham community heritage website.
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        class HouseHistoryForm {
+            constructor() {
+                this.form = document.getElementById('houseHistoryForm');
+                this.progressBar = document.getElementById('progressFill');
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateProgress();
+            }
+
+            setupEventListeners() {
+                // Form submission
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+
+                // File upload previews
+                document.getElementById('photos').addEventListener('change', (e) => this.handlePhotoUpload(e));
+                document.getElementById('documents').addEventListener('change', (e) => this.handleDocumentUpload(e));
+
+                // Character counters
+                this.setupCharacterCounters();
+
+                // Progress tracking
+                const inputs = this.form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => this.updateProgress());
+                    input.addEventListener('change', () => this.updateProgress());
+                });
+            }
+
+            setupCharacterCounters() {
+                const textareas = [
+                    { element: 'description', counter: 'descriptionCount' },
+                    { element: 'specialFeatures', counter: 'featuresCount' },
+                    { element: 'whyInterest', counter: 'interestCount' },
+                    { element: 'helpNeeded', counter: 'helpCount' },
+                    { element: 'existingHistory', counter: 'historyCount' }
+                ];
+
+                textareas.forEach(({ element, counter }) => {
+                    const textarea = document.getElementById(element);
+                    const counterElement = document.getElementById(counter);
+                    
+                    textarea.addEventListener('input', () => {
+                        counterElement.textContent = textarea.value.length;
+                    });
+                });
+            }
+
+            handlePhotoUpload(event) {
+                const files = event.target.files;
+                const preview = document.getElementById('photoPreview');
+                preview.innerHTML = '';
+                preview.style.display = 'block';
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            preview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                if (files.length > 0) {
+                    const fileList = document.createElement('div');
+                    fileList.innerHTML = `<strong>Selected files:</strong> ${Array.from(files).map(f => f.name).join(', ')}`;
+                    preview.appendChild(fileList);
+                }
+            }
+
+            handleDocumentUpload(event) {
+                const files = event.target.files;
+                const preview = document.getElementById('documentPreview');
+                preview.innerHTML = '';
+                
+                if (files.length > 0) {
+                    preview.style.display = 'block';
+                    const fileList = document.createElement('div');
+                    fileList.innerHTML = `<strong>Selected documents:</strong><br>${Array.from(files).map(f => `📄 ${f.name} (${this.formatFileSize(f.size)})`).join('<br>')}`;
+                    preview.appendChild(fileList);
+                }
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            updateProgress() {
+                const requiredFields = this.form.querySelectorAll('[required]');
+                let filledFields = 0;
+
+                requiredFields.forEach(field => {
+                    if (field.type === 'file') {
+                        if (field.files.length > 0) filledFields++;
+                    } else if (field.value.trim() !== '') {
+                        filledFields++;
+                    }
+                });
+
+                const progress = (filledFields / requiredFields.length) * 100;
+                this.progressBar.style.width = progress + '%';
+            }
+
+		async handleSubmit(event) {
+		  event.preventDefault();
+
+		  const submitBtn = document.querySelector('.submit-btn');
+		  const originalText = submitBtn.innerHTML;
+		  submitBtn.innerHTML = '⏳ Submitting...';
+		  submitBtn.disabled = true;
+
+		  try {
+			const data = {};
+			const fields = this.form.querySelectorAll('input, textarea, select');
+
+			fields.forEach(field => {
+			  if (field.type !== 'file') {
+				data[field.name] = field.value || '';
+			  }
+			});
+
+			data.timestamp = new Date().toISOString();
+			data.photoCount = this.form.photos.files.length;
+			data.documentCount = this.form.documents.files.length;
+
+			data.photos = await this.encodeFiles(this.form.photos.files);
+			data.documents = await this.encodeFiles(this.form.documents.files);
+
+			const response = await fetch('https://script.google.com/macros/s/AKfycbxz41Lpy65pBt2jIDQSU2HsHe1NZ5BUSF_eiTRotNdRWZAwOecu_teDR44rFtDigkea/exec', {
+			  method: 'POST',
+			  headers: { 'Content-Type': 'application/json' },
+			  body: JSON.stringify(data)
+			});
+
+			if (response.ok) {
+			  this.showSuccessMessage();
+			} else {
+			  throw new Error('Submission failed: ' + response.status);
+			}
+
+		  } catch (error) {
+			this.showErrorMessage(error.message);
+		  } finally {
+			submitBtn.innerHTML = originalText;
+			submitBtn.disabled = false;
+		  }
+		}
+
+		async encodeFiles(fileList) {
+		  const files = Array.from(fileList);
+		  const encoded = [];
+
+		  for (const file of files) {
+			const base64 = await new Promise((resolve, reject) => {
+			  const reader = new FileReader();
+			  reader.onload = () => {
+				const result = reader.result.split(',')[1]; // Remove "data:image/jpeg;base64,"
+				resolve(result);
+			  };
+			  reader.onerror = reject;
+			  reader.readAsDataURL(file);
+			});
+
+			encoded.push({
+			  name: file.name,
+			  type: file.type,
+			  data: base64
+			});
+		  }
+
+		  return encoded;
+		}
+
+async encodeFiles(fileList) {
+  const files = Array.from(fileList);
+  const encoded = [];
+
+  for (const file of files) {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result.split(',')[1]; // Remove data:*/*;base64,
+        resolve(result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    encoded.push({
+      name: file.name,
+      type: file.type,
+      data: base64
+    });
+  }
+
+  return encoded;
+}
+
+            showErrorMessage(errorMsg = 'There was an error submitting your form. Please try again or contact support.') {
+                const popup = document.createElement('div');
+                popup.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    text-align: center;
+                    z-index: 9999;
+                    max-width: 500px;
+                `;
+                
+                popup.innerHTML = `
+                    <h3 style="color: #e74c3c; margin-bottom: 15px;">❌ Submission Failed</h3>
+                    <p style="margin-bottom: 15px;">${errorMsg}</p>
+                    <button onclick="this.parentElement.remove(); document.querySelector('.backdrop').remove();" style="margin-top: 20px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+                `;
+
+                // Add backdrop
+                const backdrop = document.createElement('div');
+                backdrop.className = 'backdrop';
+                backdrop.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 9998;
+                `;
+                backdrop.onclick = () => {
+                    backdrop.remove();
+                    popup.remove();
+                };
+
+                document.body.appendChild(backdrop);
+                document.body.appendChild(popup);
+            }
+
+            showSuccessMessage() {
+                const submitBtn = document.querySelector('.submit-btn');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.innerHTML = '✅ Submitted Successfully!';
+                submitBtn.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                submitBtn.disabled = true;
+
+                // Create success popup
+                const popup = document.createElement('div');
+                popup.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    text-align: center;
+                    z-index: 9999;
+                    max-width: 400px;
+                `;
+                
+                popup.innerHTML = `
+                    <h3 style="color: #27ae60; margin-bottom: 15px;">🎉 Thank You!</h3>
+                    <p>Your house history form has been submitted successfully. We'll review your submission and add it to the Bishops Waltham community heritage website.</p>
+                    <button onclick="this.parentElement.remove(); document.querySelector('.backdrop').remove();" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+                `;
+
+                // Add backdrop
+                const backdrop = document.createElement('div');
+                backdrop.className = 'backdrop';
+                backdrop.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 9998;
+                `;
+                backdrop.onclick = () => {
+                    backdrop.remove();
+                    popup.remove();
+                };
+
+                document.body.appendChild(backdrop);
+                document.body.appendChild(popup);
+
+                // Reset form after 3 seconds
+                setTimeout(() => {
+                    this.form.reset();
+                    document.getElementById('photoPreview').style.display = 'none';
+                    document.getElementById('documentPreview').style.display = 'none';
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    submitBtn.disabled = false;
+                    this.updateProgress();
+                }, 3000);
+            }
+        }
+
+        // Initialize the form when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new HouseHistoryForm();
+        });
+    </script>
+</body>
+</html>
