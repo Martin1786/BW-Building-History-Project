@@ -364,7 +364,7 @@
 			data.photos = await this.encodeFiles(this.form.photos.files);
 			data.documents = await this.encodeFiles(this.form.documents.files);
 			console.log('Form data being sent:', data)
-			const response = await fetch('https://script.google.com/macros/s/AKfycbxz41Lpy65pBt2jIDQSU2HsHe1NZ5BUSF_eiTRotNdRWZAwOecu_teDR44rFtDigkea/exec', {
+			const response = await fetch('https://script.google.com/macros/s/AKfycbyhMzKneCi3TjJSHDEMSEl6jcj94B-vj4N7iZHrG34dhEmtuCEbY5wCZm9VnprkgrIV/exec', {
 			  method: 'POST',
 			  redirect: 'follow',
 			  headers: { 'Content-Type': 'application/json' },
