@@ -128,8 +128,8 @@
                     Your Interest
                 </h2>
                 <div class="form-group">
-                    <label for="whyInterest">Why Your Interest <span class="required">*</span></label>
-                    <textarea id="whyInterest" name="whyInterest" placeholder="Explain why you want to conduct/have started/have done a house history..." required></textarea>
+                    <label for="whyInterested">Why Your Interest <span class="required">*</span></label>
+                    <textarea id="whyInterested" name="whyInterest" placeholder="Explain why you want to conduct/have started/have done a house history..." required></textarea>
                     <div class="character-count">
                         <span id="interestCount">0</span> characters
                     </div>
@@ -363,11 +363,11 @@
 
 			data.photos = await this.encodeFiles(this.form.photos.files);
 			data.documents = await this.encodeFiles(this.form.documents.files);
-
+			console.log('Form data being sent:', data)
 			const response = await fetch('https://script.google.com/macros/s/AKfycbxz41Lpy65pBt2jIDQSU2HsHe1NZ5BUSF_eiTRotNdRWZAwOecu_teDR44rFtDigkea/exec', {
 			  method: 'POST',
 			  redirect: 'follow',
-			  headers: { 'Content-Type': 'text/plain' },
+			  headers: { 'Content-Type': 'application/json' },
 			  body: JSON.stringify(data)
 			});
 
