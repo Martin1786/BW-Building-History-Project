@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bishops Waltham Heritage - Building History Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .config-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .config-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .config-section input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .config-section button {
+            margin-top: 10px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .config-section button:hover {
+            background: #5568d3;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stats h3 {
+            color: #667eea;
+            font-size: 24px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .record-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .record-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .record-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .record-card .address {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .record-card .detail {
+            margin: 8px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .record-card .detail strong {
+            color: #333;
+        }
+
+        .record-card .timestamp {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .photos-section, .documents-section {
+            margin-top: 15px;
+        }
+
+        .photos-section h4, .documents-section h4 {
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .photo-thumb {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .photo-thumb:hover {
+            transform: scale(1.05);
+        }
+
+        .document-list {
+            list-style: none;
+        }
+
+        .document-list li {
+            padding: 8px;
+            background: #f8f9fa;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .document-list a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .document-list a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏛️ Building History Archive</h1>
+        <p>Bishops Waltham Community Heritage Project</p>
+    </div>
+
+    <div class="config-section">
+        <label for="scriptUrl">📋 Google Apps Script URL:</label>
+        <input 
+            type="text" 
+            id="scriptUrl" 
+            placeholder="https://script.google.com/macros/s/AKfycbylKt7mfcelcjzq7i4CuZlcNapw2iGv2cOJnZlSm9QjZJ3hJlJPDuJLlyFmgyDrg5mRMA/exec"
+        >
+        <button onclick="loadRecords()">Load Records</button>
+    </div>
+
+    <div class="search-bar" style="display:none;" id="searchBar">
+        <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="🔍 Search by address, postcode, or description..."
+            oninput="filterRecords()"
+        >
+    </div>
+
+    <div class="stats" style="display:none;" id="stats">
+        <h3 id="recordCount">0 Records</h3>
+    </div>
+
+    <div id="content">
+        <div class="loading" style="display:none;" id="loading">
+            <div class="spinner"></div>
+            <p>Loading records from Google Sheets...</p>
+        </div>
+
+        <div class="records-grid" id="recordsGrid"></div>
+    </div>
+
+    <div class="modal" id="photoModal" onclick="closeModal()">
+        <span class="modal-close">&times;</span>
+        <img id="modalImage" src="" alt="Full size photo">
+    </div>
+
+    <script>
+		const BASE_URL = "https://script.google.com/macros/s/AKfycbylKt7mfcelcjzq7i4CuZlcNapw2iGv2cOJnZlSm9QjZJ3hJlJPDuJLlyFmgyDrg5mRMA/exec"
+        let allRecords = [];
+
+        async function loadRecords() {
+			
+            /* const scriptUrl = document.getElementById('scriptUrl').value.trim();*/ 
+			const scriptUrl = BASE_URL;
+            
+            if (!scriptUrl) {
+                alert('Please enter your Google Apps Script URL first!');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const recordsGrid = document.getElementById('recordsGrid');
+            const searchBar = document.getElementById('searchBar');
+            const stats = document.getElementById('stats');
+
+            loading.style.display = 'block';
+            recordsGrid.innerHTML = '';
+
+            try {
+                const response = await fetch(scriptUrl);
+                const result = await response.json();
+
+                if (result.success) {
+                    allRecords = result.data;
+                    displayRecords(allRecords);
+                    
+                    document.getElementById('recordCount').textContent = 
+                        `${allRecords.length} Record${allRecords.length !== 1 ? 's' : ''}`;
+                    
+                    searchBar.style.display = 'block';
+                    stats.style.display = 'block';
+                } else {
+                    recordsGrid.innerHTML = `<div class="error">Error loading records: ${result.error}</div>`;
+                }
+            } catch (error) {
+                recordsGrid.innerHTML = `<div class="error">Failed to load records: ${error.message}</div>`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayRecords(records) {
+            const recordsGrid = document.getElementById('recordsGrid');
+            recordsGrid.innerHTML = '';
+
+            if (records.length === 0) {
+                recordsGrid.innerHTML = '<div class="error">No records found</div>';
+                return;
+            }
+
+            records.forEach(record => {
+                const card = createRecordCard(record);
+                recordsGrid.appendChild(card);
+            });
+        }
+
+        function createRecordCard(record) {
+            const card = document.createElement('div');
+            card.className = 'record-card';
+
+            let html = `
+                <h3>${record.Address || 'No address'}</h3>
+                <div class="address">${record.Postcode || ''} ${record['Position in Town'] || ''}</div>
+            `;
+
+            if (record.Name) {
+                html += `<div class="detail"><strong>Submitted by:</strong> ${record.Name}</div>`;
+            }
+
+            if (record['Property Description']) {
+                html += `<div class="detail"><strong>Description:</strong> ${record['Property Description']}</div>`;
+            }
+
+            if (record['Special Features']) {
+                html += `<div class="detail"><strong>Special Features:</strong> ${record['Special Features']}</div>`;
+            }
+
+            if (record['Listed Building']) {
+                html += `<div class="detail"><strong>Listed Building:</strong> ${record['Listed Building']}</div>`;
+            }
+
+            if (record['Why Interested']) {
+                html += `<div class="detail"><strong>Why Interested:</strong> ${record['Why Interested']}</div>`;
+            }
+
+            // Handle photos (check multiple possible column names)
+            const photoData = record.photos || record.Photos || record.photo;
+            if (photoData) {
+                try {
+                    const photos = typeof photoData === 'string' ? JSON.parse(photoData) : photoData;
+                    if (Array.isArray(photos) && photos.length > 0) {
+                        html += `
+                            <div class="photos-section">
+                                <h4>📷 Photos (${photos.length})</h4>
+                                <div class="photo-gallery">
+                        `;
+                        photos.forEach(photo => {
+                            html += `<img class="photo-thumb" src="${photo.data}" alt="${photo.name}" onclick="openModal('${photo.data}')">`;
+                        });
+                        html += `</div></div>`;
+                    }
+                } catch (e) {
+                    console.error('Error parsing photos:', e);
+                }
+            }
+
+            // Handle documents
+            if (record.documents) {
+                try {
+                    const docs = typeof record.documents === 'string' ? JSON.parse(record.documents) : record.documents;
+                    if (Array.isArray(docs) && docs.length > 0) {
+                        html += `
+                            <div class="documents-section">
+                                <h4>📄 Documents (${docs.length})</h4>
+                                <ul class="document-list">
+                        `;
+                        docs.forEach(doc => {
+                            html += `<li>📎 ${doc.name}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
+                } catch (e) {
+                    console.error('Error parsing documents:', e);
+                }
+            }
+
+            if (record.timestamp) {
+                const date = new Date(record.timestamp);
+                html += `<div class="timestamp">Submitted: ${date.toLocaleString()}</div>`;
+            }
+
+            card.innerHTML = html;
+            return card;
+        }
+
+        function filterRecords() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = allRecords.filter(record => {
+                return (
+                    (record.address && record.address.toLowerCase().includes(searchTerm)) ||
+                    (record.postcode && record.postcode.toLowerCase().includes(searchTerm)) ||
+                    (record.description && record.description.toLowerCase().includes(searchTerm)) ||
+                    (record.position && record.position.toLowerCase().includes(searchTerm))
+                );
+            });
+
+            displayRecords(filtered);
+            document.getElementById('recordCount').textContent = 
+                `${filtered.length} of ${allRecords.length} Record${filtered.length !== 1 ? 's' : ''}`;
+        }
+
+        function openModal(imageSrc) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('photoModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('photoModal').classList.remove('active');
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
