@@ -30,19 +30,30 @@ function doPost(e) {
     
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, message: 'Data saved successfully' }))
-      .setMimeType(ContentService.MimeType.JSON);
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader("Access-Control-Allow-Origin", "*")
+      .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+      .setHeader("Access-Control-Allow-Headers", "Content-Type");
       
   } catch (error) {
     console.error('Error processing submission:', error);
     return ContentService
       .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-	  .setHeader("Access-Control-Allow-Origin", "*")
-		.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader("Access-Control-Allow-Origin", "*")
+      .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+      .setHeader("Access-Control-Allow-Headers", "Content-Type");
   }
+}
+
+// Add OPTIONS handler for CORS preflight requests
+function doOptions(e) {
+  return ContentService
+    .createTextOutput('')
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeader("Access-Control-Allow-Origin", "*")
+    .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+    .setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
 function getOrCreateSpreadsheet() {
@@ -89,7 +100,7 @@ function setupHeaders(sheet) {
       'Property Description',
       'Special Features',
       'Listed Building',
-      'Why Interest',
+      'Why Interested',
       'Help Needed',
       'Existing History',
       'Photo Count',
@@ -125,7 +136,7 @@ function addDataToSheet(sheet, data) {
     data.description || '',
     data.specialFeatures || '',
     data.listedBuilding || '',
-    data.whyInterest || '',
+    data.whyInterested || '',
     data.helpNeeded || '',
     data.existingHistory || '',
     data.photoCount || 0,
