@@ -19,6 +19,14 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
+
+<!--
+      Notice about Google Apps Script URL
+        <div class="script-url-notice">
+            <strong>⚠️ SETUP REQUIRED:</strong> Remember to replace 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' in the JavaScript code with your actual Google Apps Script web app URL before using this form.
+        </div>
+-->
+
         <form id="houseHistoryForm">
             <!-- Photo Upload Section -->
             <div class="form-card">
@@ -120,8 +128,8 @@
                     Your Interest
                 </h2>
                 <div class="form-group">
-                    <label for="whyInterest">Why Your Interest <span class="required">*</span></label>
-                    <textarea id="whyInterest" name="whyInterest" placeholder="Explain why you want to conduct/have started/have done a house history..." required></textarea>
+                    <label for="whyInterested">Why Your Interest <span class="required">*</span></label>
+                    <textarea id="whyInterested" name="whyInterest" placeholder="Explain why you want to conduct/have started/have done a house history..." required></textarea>
                     <div class="character-count">
                         <span id="interestCount">0</span> characters
                     </div>
@@ -252,7 +260,7 @@
                 const textareas = [
                     { element: 'description', counter: 'descriptionCount' },
                     { element: 'specialFeatures', counter: 'featuresCount' },
-                    { element: 'whyInterest', counter: 'interestCount' },
+                    { element: 'whyInterested', counter: 'interestCount' },
                     { element: 'helpNeeded', counter: 'helpCount' },
                     { element: 'existingHistory', counter: 'historyCount' }
                 ];
@@ -355,7 +363,6 @@
 
 			data.photos = await this.encodeFiles(this.form.photos.files);
 			data.documents = await this.encodeFiles(this.form.documents.files);
-
 			const response = await fetch('https://script.google.com/macros/s/AKfycbylKt7mfcelcjzq7i4CuZlcNapw2iGv2cOJnZlSm9QjZJ3hJlJPDuJLlyFmgyDrg5mRMA/exec', { 
 			  method: 'POST',
 			  mode: 'no-cors',
